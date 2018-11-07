@@ -8,9 +8,7 @@ import android.widget.TextView
 import android.view.Gravity
 
 class MainActivity : Activity() {
-  companion object {
-    private val TAG = this::class.java.simpleName
-  }
+  private val TAG = this::class.java.name
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
