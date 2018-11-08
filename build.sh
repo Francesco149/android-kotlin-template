@@ -69,7 +69,7 @@ PATH="$PATH:$android_build_tools"
 build_inside_project() {
   namespace=$(
     find src/ -name *.kt | xargs cat |
-      grep "package.*$" | cut -d' ' -f2- | tr -d \; | head -n1
+      grep "package .*$" | cut -d' ' -f2- | tr -d \; | head -n1
   )
   echo "building $namespace"
   (
