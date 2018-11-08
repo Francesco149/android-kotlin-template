@@ -3,7 +3,7 @@ package com.example.kthelloandroid
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
-import android.widget.RelativeLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.view.Gravity
 
@@ -19,7 +19,8 @@ class MainActivity : Activity() {
   }
 
   val layout by lazy {
-    val x = RelativeLayout(this)
+    val x = LinearLayout(this)
+    x.setOrientation(LinearLayout.VERTICAL)
     x.addView(helloTextView)
     x
   }
