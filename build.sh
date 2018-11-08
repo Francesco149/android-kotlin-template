@@ -14,6 +14,7 @@ android_build_tools_version=${ANDROID_BUILD_TOOLS:-28.0.3}
 android_build_tools="$android_sdk/build-tools/$android_build_tools_version"
 android_keystore="${ANDROID_KEYSTORE:-$wdir/debug.keystore}"
 apksigner_params=""
+classpath="src:$android_jar"
 
 if [ ! -f "$android_keystore" ]; then
   echo "your keystore seems to be missing at $android_keystore"
@@ -83,10 +84,29 @@ build_inside_project() {
     rm -rf obj
     mkdir bin
     mkdir obj
+    mkdir libs
     mkdir -pv res/layout
     mkdir -v res/values
     mkdir -v res/drawable
   ) 2>/dev/null
+  cd libs
+  for dep in *.sh; do
+    . "./$dep"
+    classpath="$classpath:libs/$name"
+    if [ ! -f "$name" ]; then
+      echo "installing $name"
+      curl "$url" > $name || exit $?
+    fi
+    if [ -z $sha256 ]; then
+      echo "W: sha256 for $name is empty, skipping checksum"
+    elif [ $(sha256sum -b "$name" | cut -d' ' -f1) != $sha256 ]; then
+      echo "checksum mismatch for $dep"
+      echo "delete $name or fix $dep"
+      exit 1
+    fi
+  done
+  echo "classpath: $classpath"
+  cd ..
   cat > AndroidManifest.xml << EOF
 <?xml version='1.0'?>
 <manifest xmlns:a='http://schemas.android.com/apk/res/android'
@@ -102,11 +122,12 @@ build_inside_project() {
 </manifest>
 EOF
   find src/ -name *.kt | xargs \
-    kotlinc -d obj -classpath "src:$android_jar" -Werror || return $?
-  dx --dex --output=bin/classes.dex obj || return $?
+    kotlinc -no-stdlib -no-reflect -d obj \
+      -classpath "$classpath" -Werror || return $?
+  dx --dex --output=bin/classes.dex libs/*.jar obj || return $?
   cd bin
   aapt package -f -m -F "${exename}.unaligned.apk" \
-    -M ../AndroidManifest.xml -S ../res -I "$android_jar"
+    -M ../AndroidManifest.xml -S ../res -I $android_jar
   aapt add "${exename}.unaligned.apk" classes.dex || return $?
   apksigner sign --ks "$android_keystore" $apksigner_params \
     "${exename}.unaligned.apk" ||

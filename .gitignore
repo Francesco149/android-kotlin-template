@@ -2,3 +2,4 @@
 /bin
 *.keystore
 *.xml
+*.jar

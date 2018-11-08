@@ -19,6 +19,18 @@ which will compile, sign and deploy the app. the apk is in ```bin/```
 
 the first time you run it will explain how to generate a keystore
 
+# adding dependencies
+create a .sh file in libs with the following format:
+
+```
+name=destination-name.jar
+url=https://url/to/file.jar
+sha256=xxx
+```
+
+you can calculate the sha256 of the file with ```sha256sum -b file.jar```
+or omit it to skip the checksum check (not recommended)
+
 # environment variables
 * ANDROID_SDK_ROOT: path to the android sdk (default: opt/android-sdk)
 * ANDROID_PLATFORM: platform version (default: android-28)
