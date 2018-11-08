@@ -13,10 +13,6 @@ class MainActivity : Activity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val layout = RelativeLayout(this)
-    val params = RelativeLayout.LayoutParams(
-      RelativeLayout.LayoutParams.MATCH_PARENT,
-      RelativeLayout.LayoutParams.MATCH_PARENT)
-    layout.setLayoutParams(params)
     val helloTextView = TextView(this)
     helloTextView.setGravity(Gravity.CENTER)
     helloTextView.setTextSize(24.0f)
