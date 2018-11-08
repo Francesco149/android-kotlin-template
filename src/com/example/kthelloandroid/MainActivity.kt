@@ -10,14 +10,22 @@ import android.view.Gravity
 class MainActivity : Activity() {
   private val TAG = this::class.java.name
 
+  val helloTextView by lazy {
+    val x = TextView(this)
+    x.setGravity(Gravity.CENTER)
+    x.setTextSize(24.0f)
+    x.setText("hello world")
+    x
+  }
+
+  val layout by lazy {
+    val x = RelativeLayout(this)
+    x.addView(helloTextView)
+    x
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val layout = RelativeLayout(this)
-    val helloTextView = TextView(this)
-    helloTextView.setGravity(Gravity.CENTER)
-    helloTextView.setTextSize(24.0f)
-    helloTextView.setText("hello world")
-    layout.addView(helloTextView)
     setContentView(layout)
     Log.d(TAG, "hello world")
   }
