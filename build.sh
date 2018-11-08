@@ -12,7 +12,8 @@ android_platform="${ANDROID_PLATFORM:-android-28}"
 android_jar="$android_sdk/platforms/$android_platform/android.jar"
 android_build_tools_version=${ANDROID_BUILD_TOOLS:-28.0.3}
 android_build_tools="$android_sdk/build-tools/$android_build_tools_version"
-android_keystore="${ANDROID_KEYSTORE:-$wdir/key.keystore}"
+android_keystore="${ANDROID_KEYSTORE:-$wdir/debug.keystore}"
+apksigner_params=""
 
 if [ ! -f "$android_keystore" ]; then
   echo "your keystore seems to be missing at $android_keystore"
@@ -23,6 +24,11 @@ if [ ! -f "$android_keystore" ]; then
   echo ""
   echo "or point ANDROID_KEYSTORE to the correct path"
   exit 1
+fi
+
+if [ "$(realpath "$android_keystore")" = "$wdir/debug.keystore" ]; then
+  echo "W: using debug.keystore, don't actually use this apk in production"
+  apksigner_params="--ks-key-alias=mykey --ks-pass=pass:androiddebug"
 fi
 
 if [ ! -d "$android_sdk" ]; then
@@ -102,7 +108,8 @@ EOF
   aapt package -f -m -F "${exename}.unaligned.apk" \
     -M ../AndroidManifest.xml -S ../res -I "$android_jar"
   aapt add "${exename}.unaligned.apk" classes.dex || return $?
-  apksigner sign --ks "$android_keystore" "${exename}.unaligned.apk" ||
+  apksigner sign --ks "$android_keystore" $apksigner_params \
+    "${exename}.unaligned.apk" ||
     return $?
   zipalign -f 4 "${exename}.unaligned.apk" "${exename}.apk" || return $?
   cd ..
