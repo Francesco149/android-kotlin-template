@@ -85,7 +85,7 @@ build_inside_project() {
 <?xml version='1.0'?>
 <manifest xmlns:a='http://schemas.android.com/apk/res/android'
   package='${namespace}' a:versionCode='0' a:versionName='0'>
-  <application a:label='$exename'>
+  <application a:label='$exename' a:allowBackup='false'>
     <activity a:name='${namespace}.MainActivity'>
       <intent-filter>
         <category a:name='android.intent.category.LAUNCHER'/>
