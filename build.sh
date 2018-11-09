@@ -137,6 +137,7 @@ EOF
   adb shell pm clear $namespace || return $?
   adb uninstall $namespace || return $?
   adb install "bin/${exename}.apk" || return $?
+  adb logcat -c
   adb shell am start -n $namespace/.MainActivity || return $?
   adb logcat | grep "^./$namespace\..*$" || return $?
 }
